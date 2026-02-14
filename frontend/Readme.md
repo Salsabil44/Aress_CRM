@@ -1,5 +1,5 @@
-#Aress CRM – Frontend
-##Overview
+Aress CRM – Frontend
+Overview
 
 Aress CRM (Frontend) is a React application for managing leads in a sales platform. It allows users to view, add, edit, and delete leads, and provides a visual Kanban-style pipeline to track lead status.
 
@@ -7,7 +7,7 @@ This project focuses on UI, UX, and React component structure.
 
 ##Features
 
-###Lead Management
+Lead Management
 
 Add, edit, delete, and view leads
 
