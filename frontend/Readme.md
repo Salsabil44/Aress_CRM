@@ -81,22 +81,6 @@ Install dependencies:
 
 npm install
 
-
-Configure environment variables (database, API keys, etc.)
-
 Run the project:
 
 npm start
-
-Timeline
-
-Delivery Date: February 19
-
-Duration: 1 week
-
-Project Structure (Example)
-/src
-  /components  # React components
-  /pages       # Pages (if using Next.js)
-  /backend     # Node.js API
-  /database    # Database schemas / queries
