@@ -40,8 +40,8 @@ export function Dashboard({ leads, history }: DashboardProps) {
     <div className="space-y-6">
       {/* Page header */}
       <div>
-        <h1 className="text-xl font-semibold text-slate-900 tracking-tight">Overview</h1>
-        <p className="text-[13px] text-slate-400 mt-1">Track your sales pipeline performance</p>
+        <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-100 tracking-tight">Overview</h1>
+        <p className="text-[13px] text-slate-400 dark:text-slate-500 mt-1">Track your sales pipeline performance</p>
       </div>
 
       {/* Stats */}
@@ -82,15 +82,15 @@ export function Dashboard({ leads, history }: DashboardProps) {
       {/* Bottom section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {/* New Leads (current month, improved design) */}
-        <div className="bg-white rounded-xl border border-slate-200/60 p-5 hover:shadow-sm transition-all duration-200">
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200/60 dark:border-slate-700 p-5 hover:shadow-sm transition-all duration-200">
           <div className="flex items-center justify-between mb-5">
             <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 rounded-lg bg-indigo-50 flex items-center justify-center">
-                <BarChart3 className="w-3.5 h-3.5 text-indigo-500" />
+              <div className="w-7 h-7 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center">
+                <BarChart3 className="w-3.5 h-3.5 text-indigo-500 dark:text-indigo-400" />
               </div>
-              <h3 className="text-[13px] font-semibold text-slate-800">New Leads</h3>
+              <h3 className="text-[13px] font-semibold text-slate-800 dark:text-slate-200">New Leads</h3>
             </div>
-            <span className="text-[11px] text-slate-300 tabular-nums">{(() => {
+            <span className="text-[11px] text-slate-300 dark:text-slate-600 tabular-nums">{(() => {
               const now = new Date();
               const month = now.toLocaleString('default', { month: 'short' });
               return month + ' ' + now.getFullYear();
@@ -106,22 +106,22 @@ export function Dashboard({ leads, history }: DashboardProps) {
                 return d.getMonth() === thisMonth && d.getFullYear() === thisYear;
               });
               if (newLeads.length === 0) {
-                return <div className="text-[13px] text-slate-400">No new leads this month</div>;
+                return <div className="text-[13px] text-slate-400 dark:text-slate-500">No new leads this month</div>;
               }
               return newLeads.map((lead) => (
                 <div
                   key={lead.id}
-                  className="flex items-center gap-3 bg-slate-50 hover:bg-slate-100 rounded-lg px-3 py-2 transition-colors duration-150 shadow-sm"
+                  className="flex items-center gap-3 bg-slate-50 dark:bg-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg px-3 py-2 transition-colors duration-150 shadow-sm"
                 >
-                  <div className="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center text-white font-semibold text-[15px]">
+                  <div className="w-8 h-8 rounded-full bg-indigo-500 dark:bg-indigo-600 flex items-center justify-center text-white font-semibold text-[15px]">
                     {lead.name?.charAt(0)?.toUpperCase() || '?'}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-[13px] font-medium text-slate-800 truncate">{lead.name}</div>
-                    <div className="text-[11px] text-slate-400 truncate">{lead.email || lead.company || ''}</div>
+                    <div className="text-[13px] font-medium text-slate-800 dark:text-slate-200 truncate">{lead.name}</div>
+                    <div className="text-[11px] text-slate-400 dark:text-slate-500 truncate">{lead.email || lead.company || ''}</div>
                   </div>
                   <div className="flex flex-col items-end">
-                    <span className="text-[11px] text-slate-400 tabular-nums">
+                    <span className="text-[11px] text-slate-400 dark:text-slate-500 tabular-nums">
                       {new Date(lead.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                     </span>
                   </div>
@@ -132,23 +132,23 @@ export function Dashboard({ leads, history }: DashboardProps) {
         </div>
 
         {/* Recent Activity */}
-        <div className="bg-white rounded-xl border border-slate-200/60 p-5 hover:shadow-sm transition-all duration-200">
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200/60 dark:border-slate-700 p-5 hover:shadow-sm transition-all duration-200">
           <div className="flex items-center justify-between mb-5">
             <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 rounded-lg bg-violet-50 flex items-center justify-center">
-                <Activity className="w-3.5 h-3.5 text-violet-500" />
+              <div className="w-7 h-7 rounded-lg bg-violet-50 dark:bg-violet-900/30 flex items-center justify-center">
+                <Activity className="w-3.5 h-3.5 text-violet-500 dark:text-violet-400" />
               </div>
-              <h3 className="text-[13px] font-semibold text-slate-800">Recent Activity</h3>
+              <h3 className="text-[13px] font-semibold text-slate-800 dark:text-slate-200">Recent Activity</h3>
             </div>
-            <span className="text-[11px] text-slate-300 tabular-nums">{history.length} total</span>
+            <span className="text-[11px] text-slate-300 dark:text-slate-600 tabular-nums">{history.length} total</span>
           </div>
           {recentHistory.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-48 text-center">
-              <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center mb-3">
-                <Activity className="w-4 h-4 text-slate-300" />
+              <div className="w-10 h-10 bg-slate-50 dark:bg-slate-700 rounded-xl flex items-center justify-center mb-3">
+                <Activity className="w-4 h-4 text-slate-300 dark:text-slate-600" />
               </div>
-              <p className="text-[13px] font-medium text-slate-400">No recent activity</p>
-              <p className="text-[11px] text-slate-300 mt-1">Actions will appear here</p>
+              <p className="text-[13px] font-medium text-slate-400 dark:text-slate-500">No recent activity</p>
+              <p className="text-[11px] text-slate-300 dark:text-slate-600 mt-1">Actions will appear here</p>
             </div>
           ) : (
             <div className="space-y-0">
@@ -158,7 +158,7 @@ export function Dashboard({ leads, history }: DashboardProps) {
                   <div
                     key={entry.id}
                     className={`flex items-start gap-3 py-2.5 ${
-                      i < recentHistory.length - 1 ? 'border-b border-slate-50' : ''
+                      i < recentHistory.length - 1 ? 'border-b border-slate-50 dark:border-slate-700' : ''
                     }`}
                   >
                     <div className="mt-1.5">
@@ -170,9 +170,9 @@ export function Dashboard({ leads, history }: DashboardProps) {
                           {style.label}
                         </span>
                       </div>
-                      <p className="text-[12px] text-slate-500 truncate leading-relaxed">{entry.details}</p>
+                      <p className="text-[12px] text-slate-500 dark:text-slate-400 truncate leading-relaxed">{entry.details}</p>
                     </div>
-                    <span className="text-[10px] text-slate-300 shrink-0 mt-1 tabular-nums">
+                    <span className="text-[10px] text-slate-300 dark:text-slate-600 shrink-0 mt-1 tabular-nums">
                       {new Date(entry.timestamp).toLocaleDateString('en-US', {
                         month: 'short',
                         day: 'numeric',

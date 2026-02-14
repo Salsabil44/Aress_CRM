@@ -56,8 +56,8 @@ export function Leads({ leads, onAdd, onUpdate, onDelete, onToast }: LeadsPagePr
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-slate-900 tracking-tight">Leads</h1>
-          <p className="text-[13px] text-slate-400 mt-0.5">Manage and track all your leads</p>
+          <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-100 tracking-tight">Leads</h1>
+          <p className="text-[13px] text-slate-400 dark:text-slate-500 mt-0.5">Manage and track all your leads</p>
         </div>
         <Button
           icon={<Plus className="w-4 h-4" />}
@@ -90,13 +90,13 @@ export function Leads({ leads, onAdd, onUpdate, onDelete, onToast }: LeadsPagePr
         size="sm"
       >
         <div className="space-y-4">
-          <div className="flex items-start gap-3 p-3.5 bg-red-50 rounded-lg border border-red-100">
-            <AlertTriangle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+          <div className="flex items-start gap-3 p-3.5 bg-red-50 dark:bg-red-950/30 rounded-lg border border-red-100 dark:border-red-900/50">
+            <AlertTriangle className="w-5 h-5 text-red-500 dark:text-red-400 shrink-0 mt-0.5" />
             <div>
-              <p className="text-[13px] text-slate-700">
+              <p className="text-[13px] text-slate-700 dark:text-slate-300">
                 Are you sure you want to delete <span className="font-semibold">{deleteLeadName}</span>?
               </p>
-              <p className="text-[12px] text-slate-500 mt-0.5">This action cannot be undone.</p>
+              <p className="text-[12px] text-slate-500 dark:text-slate-400 mt-0.5">This action cannot be undone.</p>
             </div>
           </div>
           <div className="flex justify-end gap-2">

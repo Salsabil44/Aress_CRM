@@ -13,28 +13,23 @@ export function LoginPage() {
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
     if (isRegister) {
       if (!name.trim()) { setError('Name is required'); return; }
       if (!email.trim()) { setError('Email is required'); return; }
+      if (email === 'admin@gmail.com') { setError('Cannot register with admin email'); return; }
       if (password.length < 6) { setError('Password must be at least 6 characters'); return; }
-      const result = register({ name, email, password, role });
+      const result = await register({ name, email, password, role });
       if (!result.success) setError(result.error || 'Registration failed');
     } else {
       if (!email.trim()) { setError('Email is required'); return; }
       if (!password.trim()) { setError('Password is required'); return; }
-      const result = login({ email, password });
+      const result = await login({ email, password });
       if (!result.success) setError(result.error || 'Login failed');
     }
-  };
-
-  const fillDemo = () => {
-    setEmail('admin@salesflow.com');
-    setPassword('admin123');
-    setError('');
   };
 
   return (
@@ -77,76 +72,76 @@ export function LoginPage() {
       </div>
 
       {/* Right side - form */}
-      <div className="flex-1 flex items-center justify-center p-8 bg-white">
+      <div className="flex-1 flex items-center justify-center p-8 bg-white dark:bg-slate-900">
         <div className="w-full max-w-sm">
           <div className="lg:hidden flex items-center gap-2.5 mb-8">
             <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
               <Zap className="w-4 h-4 text-white" />
             </div>
-            <span className="text-lg font-bold text-slate-800">SalesFlow</span>
+            <span className="text-lg font-bold text-slate-800 dark:text-slate-100">SalesFlow</span>
           </div>
 
-          <h2 className="text-xl font-bold text-slate-900">
+          <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">
             {isRegister ? 'Create your account' : 'Welcome back'}
           </h2>
-          <p className="text-[13px] text-slate-400 mt-1.5 mb-7">
+          <p className="text-[13px] text-slate-400 dark:text-slate-500 mt-1.5 mb-7">
             {isRegister
               ? 'Start managing your sales pipeline today'
               : 'Sign in to your SalesFlow CRM account'}
           </p>
 
           {error && (
-            <div className="mb-5 p-3 bg-red-50 border border-red-100 rounded-lg">
-              <p className="text-[13px] text-red-600">{error}</p>
+            <div className="mb-5 p-3 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800/30 rounded-lg">
+              <p className="text-[13px] text-red-600 dark:text-red-400">{error}</p>
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {isRegister && (
               <div className="space-y-1.5">
-                <label className="block text-[13px] font-medium text-slate-600">Full Name</label>
+                <label className="block text-[13px] font-medium text-slate-600 dark:text-slate-400">Full Name</label>
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 dark:text-slate-600" />
                   <input
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="John Doe"
-                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-slate-200 bg-white text-[13px] focus:border-primary-300 focus:outline-none focus:ring-2 focus:ring-primary-500/10"
+                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-[13px] text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-primary-300 dark:focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/10"
                   />
                 </div>
               </div>
             )}
 
             <div className="space-y-1.5">
-              <label className="block text-[13px] font-medium text-slate-600">Email</label>
+              <label className="block text-[13px] font-medium text-slate-600 dark:text-slate-400">Email</label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 dark:text-slate-600" />
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@company.com"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-slate-200 bg-white text-[13px] focus:border-primary-300 focus:outline-none focus:ring-2 focus:ring-primary-500/10"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-[13px] text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-primary-300 dark:focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/10"
                 />
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-[13px] font-medium text-slate-600">Password</label>
+              <label className="block text-[13px] font-medium text-slate-600 dark:text-slate-400">Password</label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 dark:text-slate-600" />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full pl-10 pr-11 py-2.5 rounded-lg border border-slate-200 bg-white text-[13px] focus:border-primary-300 focus:outline-none focus:ring-2 focus:ring-primary-500/10"
+                  className="w-full pl-10 pr-11 py-2.5 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-[13px] text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-primary-300 dark:focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/10"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-500 cursor-pointer"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-300 dark:text-slate-600 hover:text-slate-500 dark:hover:text-slate-400 cursor-pointer"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -155,15 +150,14 @@ export function LoginPage() {
 
             {isRegister && (
               <div className="space-y-1.5">
-                <label className="block text-[13px] font-medium text-slate-600">Role</label>
+                <label className="block text-[13px] font-medium text-slate-600 dark:text-slate-400">Role</label>
                 <select
                   value={role}
                   onChange={(e) => setRole(e.target.value as RegisterData['role'])}
-                  className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 bg-white text-[13px] focus:border-primary-300 focus:outline-none focus:ring-2 focus:ring-primary-500/10"
+                  className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-[13px] text-slate-900 dark:text-slate-100 focus:border-primary-300 dark:focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/10"
                 >
                   <option value="sales_rep">Sales Representative</option>
                   <option value="manager">Manager</option>
-                  <option value="admin">Admin</option>
                 </select>
               </div>
             )}
@@ -186,16 +180,6 @@ export function LoginPage() {
             </button>
           </form>
 
-          {!isRegister && (
-            <button
-              onClick={fillDemo}
-              className="w-full mt-2.5 flex items-center justify-center gap-2 bg-slate-50 text-slate-600 py-2.5 rounded-lg font-medium text-[13px] hover:bg-slate-100 transition-colors cursor-pointer border border-slate-100"
-            >
-              <Zap className="w-4 h-4" />
-              Use Demo Account
-            </button>
-          )}
-
           <div className="mt-5 text-center">
             <button
               onClick={() => { setIsRegister(!isRegister); setError(''); }}
@@ -206,17 +190,6 @@ export function LoginPage() {
                 : "Don't have an account? Sign up"}
             </button>
           </div>
-
-          {!isRegister && (
-            <div className="mt-7 p-3.5 bg-slate-50 border border-slate-100 rounded-lg">
-              <p className="text-[11px] font-semibold text-slate-500 mb-2">Demo Credentials</p>
-              <div className="space-y-1">
-                <p className="text-[11px] text-slate-400"><span className="font-medium text-slate-500">Admin:</span> admin@salesflow.com / admin123</p>
-                <p className="text-[11px] text-slate-400"><span className="font-medium text-slate-500">Sales:</span> sarah@salesflow.com / sarah123</p>
-                <p className="text-[11px] text-slate-400"><span className="font-medium text-slate-500">Manager:</span> john@salesflow.com / john123</p>
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>

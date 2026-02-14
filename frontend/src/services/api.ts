@@ -1,8 +1,5 @@
-import { v4 as uuidv4 } from 'uuid';
+import { supabase } from '@/lib/supabase';
 import type { Lead, LeadFormData, LeadStatus } from '@/types';
-
-const STORAGE_KEY = 'salesflow_leads';
-const HISTORY_KEY = 'salesflow_history';
 
 export interface HistoryEntry {
   id: string;
@@ -13,143 +10,261 @@ export interface HistoryEntry {
   timestamp: string;
 }
 
-// Seed data for demo
-const SEED_LEADS: Lead[] = [
-  {
-    id: uuidv4(), name: 'Alice Martin', email: 'alice@techcorp.com', phone: '+1 555-0101',
-    company: 'TechCorp', source: 'LinkedIn', status: 'New', createdAt: '2025-01-15T10:00:00Z', notes: 'Met at tech conference'
-  },
-  {
-    id: uuidv4(), name: 'Bob Johnson', email: 'bob@innovate.io', phone: '+1 555-0102',
-    company: 'Innovate.io', source: 'Referral', status: 'Contacted', createdAt: '2025-01-20T14:30:00Z', notes: 'Referred by partner company'
-  },
-  {
-    id: uuidv4(), name: 'Clara Williams', email: 'clara@globalsoft.com', phone: '+1 555-0103',
-    company: 'GlobalSoft', source: 'Cold Call', status: 'Interested', createdAt: '2025-02-05T09:15:00Z', notes: 'Interested in enterprise plan'
-  },
-  {
-    id: uuidv4(), name: 'David Brown', email: 'david@startupx.co', phone: '+1 555-0104',
-    company: 'StartupX', source: 'Website', status: 'Negotiation', createdAt: '2025-02-12T16:45:00Z', notes: 'Negotiating annual contract'
-  },
-  {
-    id: uuidv4(), name: 'Eva Chen', email: 'eva@megacorp.com', phone: '+1 555-0105',
-    company: 'MegaCorp', source: 'Email Campaign', status: 'Won', createdAt: '2025-02-28T11:00:00Z', notes: 'Signed 2-year deal'
-  },
-  {
-    id: uuidv4(), name: 'Frank Miller', email: 'frank@smallbiz.net', phone: '+1 555-0106',
-    company: 'SmallBiz', source: 'Event', status: 'Lost', createdAt: '2025-03-01T08:30:00Z', notes: 'Budget constraints'
-  },
-  {
-    id: uuidv4(), name: 'Grace Lee', email: 'grace@dataflow.ai', phone: '+1 555-0107',
-    company: 'DataFlow AI', source: 'LinkedIn', status: 'New', createdAt: '2025-03-10T13:20:00Z', notes: 'AI startup looking for sales reps'
-  },
-  {
-    id: uuidv4(), name: 'Henry Davis', email: 'henry@cloudpeak.com', phone: '+1 555-0108',
-    company: 'CloudPeak', source: 'Referral', status: 'Contacted', createdAt: '2025-03-15T10:45:00Z', notes: 'Follow up scheduled for next week'
-  },
-  {
-    id: uuidv4(), name: 'Isabelle Torres', email: 'isabelle@nexgen.io', phone: '+1 555-0109',
-    company: 'NexGen Solutions', source: 'Cold Call', status: 'Interested', createdAt: '2025-04-02T15:00:00Z', notes: 'Wants a demo presentation'
-  },
-  {
-    id: uuidv4(), name: 'James Wilson', email: 'james@fintech.pro', phone: '+1 555-0110',
-    company: 'FinTech Pro', source: 'Website', status: 'Won', createdAt: '2025-04-10T09:30:00Z', notes: 'Closed deal - premium tier'
-  },
-  {
-    id: uuidv4(), name: 'Karen White', email: 'karen@retailmax.com', phone: '+1 555-0111',
-    company: 'RetailMax', source: 'Event', status: 'Negotiation', createdAt: '2025-04-18T14:15:00Z', notes: 'Met at SaaS summit, discussing pricing'
-  },
-  {
-    id: uuidv4(), name: 'Leo Martinez', email: 'leo@greenwave.co', phone: '+1 555-0112',
-    company: 'GreenWave', source: 'LinkedIn', status: 'New', createdAt: '2025-05-01T11:30:00Z', notes: 'Sustainability company, high potential'
-  },
-];
-
-function getLeads(): Lead[] {
-  const stored = localStorage.getItem(STORAGE_KEY);
-  if (!stored) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(SEED_LEADS));
-    return SEED_LEADS;
+async function addHistory(entry: Omit<HistoryEntry, 'id' | 'timestamp'>): Promise<void> {
+  try {
+    await supabase.from('history').insert({
+      lead_id: entry.leadId,
+      lead_name: entry.leadName,
+      action: entry.action,
+      details: entry.details,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error('Error adding history:', error);
   }
-  return JSON.parse(stored);
-}
-
-function saveLeads(leads: Lead[]): void {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(leads));
-}
-
-function getHistory(): HistoryEntry[] {
-  const stored = localStorage.getItem(HISTORY_KEY);
-  if (!stored) return [];
-  return JSON.parse(stored);
-}
-
-function addHistory(entry: Omit<HistoryEntry, 'id' | 'timestamp'>): void {
-  const history = getHistory();
-  history.unshift({
-    ...entry,
-    id: uuidv4(),
-    timestamp: new Date().toISOString(),
-  });
-  // Keep last 100 entries
-  localStorage.setItem(HISTORY_KEY, JSON.stringify(history.slice(0, 100)));
 }
 
 export const api = {
-  getLeads: (): Lead[] => {
-    return getLeads();
-  },
+  getLeads: async (): Promise<Lead[]> => {
+    try {
+      // Fetch leads
+      const { data: leadsData, error: leadsError } = await supabase
+        .from('leads')
+        .select('*')
+        .order('created_at', { ascending: false });
 
-  getLead: (id: string): Lead | undefined => {
-    return getLeads().find(l => l.id === id);
-  },
+      if (leadsError) throw leadsError;
+      
+      if (!leadsData || leadsData.length === 0) return [];
 
-  createLead: (data: LeadFormData): Lead => {
-    const leads = getLeads();
-    const newLead: Lead = {
-      ...data,
-      id: uuidv4(),
-      createdAt: new Date().toISOString(),
-    };
-    leads.unshift(newLead);
-    saveLeads(leads);
-    addHistory({ leadId: newLead.id, leadName: newLead.name, action: 'created', details: `Lead "${newLead.name}" from ${newLead.company} was created` });
-    return newLead;
-  },
+      // Get unique user IDs
+      const userIds = [...new Set(leadsData.map(lead => lead.user_id))];
+      
+      // Fetch user profiles for these IDs
+      const { data: profilesData, error: profilesError } = await supabase
+        .from('user_profiles')
+        .select('id, name')
+        .in('id', userIds);
 
-  updateLead: (id: string, data: Partial<LeadFormData>): Lead | undefined => {
-    const leads = getLeads();
-    const index = leads.findIndex(l => l.id === id);
-    if (index === -1) return undefined;
-    const oldLead = leads[index];
-    leads[index] = { ...leads[index], ...data };
-    saveLeads(leads);
+      if (profilesError) {
+        console.error('Error fetching user profiles:', profilesError);
+      }
 
-    if (data.status && data.status !== oldLead.status) {
-      addHistory({ leadId: id, leadName: leads[index].name, action: 'status_changed', details: `Status changed from "${oldLead.status}" to "${data.status}"` });
-    } else {
-      addHistory({ leadId: id, leadName: leads[index].name, action: 'updated', details: `Lead "${leads[index].name}" was updated` });
+      // Create a map of user_id to name
+      const userMap = new Map(profilesData?.map(p => [p.id, p.name]) || []);
+
+      return leadsData.map(lead => ({
+        id: lead.id,
+        name: lead.name,
+        email: lead.email,
+        phone: lead.phone,
+        company: lead.company,
+        source: lead.source,
+        status: lead.status,
+        notes: lead.notes,
+        createdAt: lead.created_at,
+        ownerName: userMap.get(lead.user_id),
+        ownerId: lead.user_id,
+      }));
+    } catch (error) {
+      console.error('Error fetching leads:', error);
+      return [];
     }
-    return leads[index];
   },
 
-  deleteLead: (id: string): boolean => {
-    const leads = getLeads();
-    const lead = leads.find(l => l.id === id);
-    const filtered = leads.filter(l => l.id !== id);
-    if (filtered.length === leads.length) return false;
-    saveLeads(filtered);
-    if (lead) {
-      addHistory({ leadId: id, leadName: lead.name, action: 'deleted', details: `Lead "${lead.name}" was deleted` });
+  getLead: async (id: string): Promise<Lead | undefined> => {
+    try {
+      const { data, error } = await supabase
+        .from('leads')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error) throw error;
+
+      return {
+        id: data.id,
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        company: data.company,
+        source: data.source,
+        status: data.status,
+        notes: data.notes,
+        createdAt: data.created_at,
+      };
+    } catch (error) {
+      console.error('Error fetching lead:', error);
+      return undefined;
     }
-    return true;
   },
 
-  updateLeadStatus: (id: string, status: LeadStatus): Lead | undefined => {
+  createLead: async (formData: LeadFormData): Promise<Lead | null> => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+
+      const { data, error } = await supabase
+        .from('leads')
+        .insert({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          company: formData.company,
+          source: formData.source,
+          status: formData.status,
+          notes: formData.notes,
+          user_id: user.id,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      const newLead: Lead = {
+        id: data.id,
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        company: data.company,
+        source: data.source,
+        status: data.status,
+        notes: data.notes,
+        createdAt: data.created_at,
+      };
+
+      await addHistory({
+        leadId: newLead.id,
+        leadName: newLead.name,
+        action: 'created',
+        details: `Lead "${newLead.name}" from ${newLead.company} was created`,
+      });
+
+      return newLead;
+    } catch (error) {
+      console.error('Error creating lead:', error);
+      return null;
+    }
+  },
+
+  updateLead: async (id: string, formData: Partial<LeadFormData>): Promise<Lead | undefined> => {
+    try {
+      // Get old lead for history
+      const { data: oldData } = await supabase
+        .from('leads')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      const { data, error } = await supabase
+        .from('leads')
+        .update({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          company: formData.company,
+          source: formData.source,
+          status: formData.status,
+          notes: formData.notes,
+        })
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      const updatedLead: Lead = {
+        id: data.id,
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        company: data.company,
+        source: data.source,
+        status: data.status,
+        notes: data.notes,
+        createdAt: data.created_at,
+      };
+
+      if (formData.status && oldData && formData.status !== oldData.status) {
+        await addHistory({
+          leadId: id,
+          leadName: updatedLead.name,
+          action: 'status_changed',
+          details: `Status changed from "${oldData.status}" to "${formData.status}"`,
+        });
+      } else {
+        await addHistory({
+          leadId: id,
+          leadName: updatedLead.name,
+          action: 'updated',
+          details: `Lead "${updatedLead.name}" was updated`,
+        });
+      }
+
+      return updatedLead;
+    } catch (error) {
+      console.error('Error updating lead:', error);
+      return undefined;
+    }
+  },
+
+  deleteLead: async (id: string): Promise<boolean> => {
+    try {
+      // Get lead for history
+      const { data: lead } = await supabase
+        .from('leads')
+        .select('name')
+        .eq('id', id)
+        .single();
+
+      const { error } = await supabase
+        .from('leads')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      if (lead) {
+        await addHistory({
+          leadId: id,
+          leadName: lead.name,
+          action: 'deleted',
+          details: `Lead "${lead.name}" was deleted`,
+        });
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error deleting lead:', error);
+      return false;
+    }
+  },
+
+  updateLeadStatus: async (id: string, status: LeadStatus): Promise<Lead | undefined> => {
     return api.updateLead(id, { status });
   },
 
-  getHistory: (): HistoryEntry[] => {
-    return getHistory();
+  getHistory: async (): Promise<HistoryEntry[]> => {
+    try {
+      const { data, error } = await supabase
+        .from('history')
+        .select('*')
+        .order('timestamp', { ascending: false })
+        .limit(100);
+
+      if (error) throw error;
+
+      return (data || []).map(entry => ({
+        id: entry.id,
+        leadId: entry.lead_id,
+        leadName: entry.lead_name,
+        action: entry.action,
+        details: entry.details,
+        timestamp: entry.timestamp,
+      }));
+    } catch (error) {
+      console.error('Error fetching history:', error);
+      return [];
+    }
   },
 };

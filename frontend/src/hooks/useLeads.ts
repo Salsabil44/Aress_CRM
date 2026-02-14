@@ -8,11 +8,12 @@ export function useLeads() {
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const refresh = useCallback(() => {
+  const refresh = useCallback(async () => {
     setIsLoading(true);
-    const data = api.getLeads();
+    const data = await api.getLeads();
     setLeads(data);
-    setHistory(api.getHistory());
+    const historyData = await api.getHistory();
+    setHistory(historyData);
     setIsLoading(false);
   }, []);
 
@@ -20,23 +21,23 @@ export function useLeads() {
     refresh();
   }, [refresh]);
 
-  const addLead = useCallback((data: LeadFormData) => {
-    api.createLead(data);
+  const addLead = useCallback(async (data: LeadFormData) => {
+    await api.createLead(data);
     refresh();
   }, [refresh]);
 
-  const updateLead = useCallback((id: string, data: Partial<LeadFormData>) => {
-    api.updateLead(id, data);
+  const updateLead = useCallback(async (id: string, data: Partial<LeadFormData>) => {
+    await api.updateLead(id, data);
     refresh();
   }, [refresh]);
 
-  const deleteLead = useCallback((id: string) => {
-    api.deleteLead(id);
+  const deleteLead = useCallback(async (id: string) => {
+    await api.deleteLead(id);
     refresh();
   }, [refresh]);
 
-  const updateStatus = useCallback((id: string, status: LeadStatus) => {
-    api.updateLeadStatus(id, status);
+  const updateStatus = useCallback(async (id: string, status: LeadStatus) => {
+    await api.updateLeadStatus(id, status);
     refresh();
   }, [refresh]);
 

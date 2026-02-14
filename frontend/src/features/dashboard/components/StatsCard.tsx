@@ -47,7 +47,7 @@ export function StatsCard({ title, value, subtitle, icon, trend, color = 'indigo
   const colors = colorMap[color];
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200/60 p-6 shadow-sm hover:shadow-lg transition-all duration-200 group flex flex-col gap-2 relative">
+    <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/60 dark:border-slate-700 p-6 shadow-sm hover:shadow-lg transition-all duration-200 group flex flex-col gap-2 relative">
       <div className="flex items-center justify-between mb-2">
         <div className={`w-12 h-12 rounded-xl ${colors.iconBg} ${colors.iconText} flex items-center justify-center text-[22px]`}>
           {icon}
@@ -66,13 +66,13 @@ export function StatsCard({ title, value, subtitle, icon, trend, color = 'indigo
         )}
       </div>
       <div className="flex flex-col gap-0.5">
-        <p className="text-3xl font-bold text-slate-900 tracking-tight leading-tight">{value}</p>
-        <p className="text-[13px] text-slate-500 font-semibold">{title}</p>
+        <p className="text-3xl font-bold text-slate-900 dark:text-slate-100 tracking-tight leading-tight">{value}</p>
+        <p className="text-[13px] text-slate-500 dark:text-slate-400 font-semibold">{title}</p>
         {subtitle && (
-          <p className="text-[12px] text-slate-400 mt-0.5">{subtitle}</p>
+          <p className="text-[12px] text-slate-400 dark:text-slate-500 mt-0.5">{subtitle}</p>
         )}
         {trend && (
-          <p className="text-[11px] text-slate-300 mt-1">{trend.label}</p>
+          <p className="text-[11px] text-slate-300 dark:text-slate-600 mt-1">{trend.label}</p>
         )}
       </div>
       {/* Accent hover line */}

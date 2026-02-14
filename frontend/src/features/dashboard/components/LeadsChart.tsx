@@ -83,18 +83,18 @@ export function LeadsChart({ leads }: LeadsChartProps) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
       {/* Monthly Evolution */}
-      <div className="bg-white rounded-xl border border-slate-200/60 p-5 hover:shadow-sm transition-all duration-200">
+      <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200/60 dark:border-slate-700 p-5 hover:shadow-sm transition-all duration-200">
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-indigo-50 flex items-center justify-center">
-              <TrendingUp className="w-3.5 h-3.5 text-indigo-500" />
+            <div className="w-7 h-7 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center">
+              <TrendingUp className="w-3.5 h-3.5 text-indigo-500 dark:text-indigo-400" />
             </div>
             <div>
-              <h3 className="text-[13px] font-semibold text-slate-800">Lead Evolution</h3>
-              <p className="text-[11px] text-slate-300">Monthly new leads</p>
+              <h3 className="text-[13px] font-semibold text-slate-800 dark:text-slate-200">Lead Evolution</h3>
+              <p className="text-[11px] text-slate-300 dark:text-slate-600">Monthly new leads</p>
             </div>
           </div>
-          <span className="text-[11px] font-medium text-slate-400 bg-slate-50 px-2 py-1 rounded-md tabular-nums">
+          <span className="text-[11px] font-medium text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-700 px-2 py-1 rounded-md tabular-nums">
             {leads.length} total
           </span>
         </div>
@@ -139,15 +139,15 @@ export function LeadsChart({ leads }: LeadsChartProps) {
       </div>
 
       {/* Status Breakdown (bar/progress, dashboard style) */}
-      <div className="bg-white rounded-xl border border-slate-200/60 p-5 hover:shadow-sm transition-all duration-200">
+      <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200/60 dark:border-slate-700 p-5 hover:shadow-sm transition-all duration-200">
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-indigo-50 flex items-center justify-center">
-              <PieIcon className="w-3.5 h-3.5 text-indigo-500" />
+            <div className="w-7 h-7 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center">
+              <PieIcon className="w-3.5 h-3.5 text-indigo-500 dark:text-indigo-400" />
             </div>
-            <h3 className="text-[13px] font-semibold text-slate-800">Status Pepeline</h3>
+            <h3 className="text-[13px] font-semibold text-slate-800 dark:text-slate-200">Status Pepeline</h3>
           </div>
-          <span className="text-[11px] text-slate-300 tabular-nums">{leads.length} leads</span>
+          <span className="text-[11px] text-slate-300 dark:text-slate-600 tabular-nums">{leads.length} leads</span>
         </div>
         <div className="space-y-3.5">
           {[
@@ -164,11 +164,11 @@ export function LeadsChart({ leads }: LeadsChartProps) {
                 <div className="flex items-center justify-between mb-1">
                   <div className="flex items-center gap-2">
                     <div className={`w-1.5 h-1.5 rounded-full ${item.color}`} />
-                    <span className="text-[12px] font-medium text-slate-500">{item.label}</span>
+                    <span className="text-[12px] font-medium text-slate-500 dark:text-slate-400">{item.label}</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <span className="text-[12px] font-semibold text-slate-700 tabular-nums">{count}</span>
-                    <span className="text-[10px] text-slate-300 tabular-nums w-7 text-right">
+                    <span className="text-[12px] font-semibold text-slate-700 dark:text-slate-300 tabular-nums">{count}</span>
+                    <span className="text-[10px] text-slate-300 dark:text-slate-600 tabular-nums w-7 text-right">
                       {leads.length > 0 ? Math.round((count / leads.length) * 100) : 0}%
                     </span>
                   </div>

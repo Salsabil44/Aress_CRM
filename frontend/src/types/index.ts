@@ -12,6 +12,8 @@ export interface Lead {
   status: LeadStatus;
   createdAt: string;
   notes: string;
+  ownerName?: string; // For managers to see who created the lead
+  ownerId?: string;
 }
 
 export interface LeadFormData {
