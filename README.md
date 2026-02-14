@@ -132,7 +132,13 @@ Visit **http://localhost:5173** 🎉
 
 ---
 
-## 📁 Project Structure
+## 🌐 Demo
+
+Check out the live demo at [Aress CRM Demo](https://aress-crm.onrender.com).
+
+---
+
+## 📜 Project Structure
 
 ```
 src/
@@ -194,16 +200,6 @@ src/
 - Smooth color transitions
 
 ---
-
-## 📚 Additional Documentation
-
-- **[QUICK_START.md](QUICK_START.md)** - Step-by-step setup guide
-- **[CREATE_ADMIN_USER.md](CREATE_ADMIN_USER.md)** - Admin account creation
-- **[supabase-schema.sql](supabase-schema.sql)** - Complete database schema
-- **[cleanup-schema.sql](cleanup-schema.sql)** - Database reset script
-
----
-
 ## 🙏 Acknowledgments
 
 Special thanks to **[@defaltastra](https://github.com/defaltastra)** for their invaluable contributions to the backend integration and database architecture.
