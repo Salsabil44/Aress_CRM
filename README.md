@@ -132,18 +132,6 @@ Visit **http://localhost:5173** 🎉
 
 ---
 
-## 🎭 Demo Credentials
-
-| Role | Email | Password | Access Level |
-|------|-------|----------|--------------|
-| 👑 Admin | admin@gmail.com | admin123 | User Management |
-| 👔 Manager | manager@example.com | manager123 | All Team Leads |
-| 💼 Sales Rep | sales@example.com | sales123 | Own Leads Only |
-
-> **Note:** Admin account (`admin@gmail.com`) has hardcoded privileges and always defaults to admin role.
-
----
-
 ## 📁 Project Structure
 
 ```
