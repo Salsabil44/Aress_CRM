@@ -22,5 +22,5 @@ export interface RegisterData {
   name: string;
   email: string;
   password: string;
-  role: User['role'];
+  role?: 'admin' | 'sales_rep' | 'manager';
 }

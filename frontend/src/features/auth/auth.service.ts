@@ -74,7 +74,7 @@ export const authService = {
       name: data.name,
       email: data.email,
       password: data.password,
-      role: data.role,
+      role: 'sales_rep',
       createdAt: new Date().toISOString(),
     };
     users.push(newUser);

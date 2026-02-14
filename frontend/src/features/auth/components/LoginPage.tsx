@@ -9,7 +9,6 @@ export function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
-  const [role, setRole] = useState<RegisterData['role']>('sales_rep');
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
@@ -22,7 +21,7 @@ export function LoginPage() {
       if (!email.trim()) { setError('Email is required'); return; }
       if (email === 'admin@gmail.com') { setError('Cannot register with admin email'); return; }
       if (password.length < 6) { setError('Password must be at least 6 characters'); return; }
-      const result = await register({ name, email, password, role });
+      const result = await register({ name, email, password });
       if (!result.success) setError(result.error || 'Registration failed');
     } else {
       if (!email.trim()) { setError('Email is required'); return; }
@@ -148,19 +147,7 @@ export function LoginPage() {
               </div>
             </div>
 
-            {isRegister && (
-              <div className="space-y-1.5">
-                <label className="block text-[13px] font-medium text-slate-600 dark:text-slate-400">Role</label>
-                <select
-                  value={role}
-                  onChange={(e) => setRole(e.target.value as RegisterData['role'])}
-                  className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-[13px] text-slate-900 dark:text-slate-100 focus:border-primary-300 dark:focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/10"
-                >
-                  <option value="sales_rep">Sales Representative</option>
-                  <option value="manager">Manager</option>
-                </select>
-              </div>
-            )}
+
 
             <button
               type="submit"

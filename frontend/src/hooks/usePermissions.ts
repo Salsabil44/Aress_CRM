@@ -15,7 +15,7 @@ export function usePermissions() {
     isSalesRep,
     
     // Permission checks
-    canAccessSettings: isAdmin,
+    canAccessSettings: true, // All users can access their own profile settings
     canDeleteLeads: isAdmin || isManager,
     canEditAllLeads: isAdmin || isManager,
     canManageUsers: isAdmin,

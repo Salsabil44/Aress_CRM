@@ -10,6 +10,7 @@ interface AuthContextValue {
   register: (data: RegisterData) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
   updateProfile: (data: { name: string; email: string }) => Promise<{ success: boolean; error?: string }>;
+  updatePassword: (data: { currentPassword: string; newPassword: string }) => Promise<{ success: boolean; error?: string }>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -97,13 +98,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (error) throw error;
 
       if (authData.user) {
-        const userRole = authData.user.email === 'admin@gmail.com' ? 'admin' : data.role;
+        const userRole = authData.user.email === 'admin@gmail.com' ? 'admin' : (data.role || 'sales_rep');
         setUser({
           id: authData.user.id,
           email: authData.user.email!,
           name: data.name,
           role: userRole,
-          role: data.role,
           createdAt: authData.user.created_at,
         });
         return { success: true };
@@ -140,6 +140,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [user]
   );
 
+  const updatePassword = useCallback(
+    async (data: { currentPassword: string; newPassword: string }) => {
+      if (!user) return { success: false, error: 'Not authenticated' };
+      
+      try {
+        const { error } = await supabase.auth.updateUser({
+          password: data.newPassword,
+        });
+
+        if (error) throw error;
+
+        return { success: true };
+      } catch (error: any) {
+        return { success: false, error: error.message || 'Failed to update password' };
+      }
+    },
+    [user]
+  );
+
   return (
     <AuthContext.Provider
       value={{
@@ -150,6 +169,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         register,
         logout,
         updateProfile,
+        updatePassword,
       }}
     >
       {children}
