@@ -59,6 +59,7 @@ export function AdminPage() {
     setTimeout(() => setMessage(null), 3000);
   };
 
+
   const getRoleBadge = (role: User['role']) => {
     switch (role) {
       case 'admin':

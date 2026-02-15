@@ -166,6 +166,38 @@ EXCEPTION
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
+-- Backfill user profiles for existing auth users
+CREATE OR REPLACE FUNCTION backfill_user_profiles()
+RETURNS INTEGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, auth AS $$
+DECLARE
+  inserted_count INTEGER;
+BEGIN
+  IF NOT is_admin() THEN
+    RAISE EXCEPTION 'Only admins can backfill user profiles';
+  END IF;
+
+  INSERT INTO user_profiles (id, name, email, role, created_at)
+  SELECT
+    u.id,
+    COALESCE(u.raw_user_meta_data->>'name', split_part(u.email, '@', 1)),
+    u.email,
+    CASE
+      WHEN u.email = 'admin@gmail.com' THEN 'admin'
+      ELSE COALESCE(u.raw_user_meta_data->>'role', 'sales_rep')
+    END,
+    u.created_at
+  FROM auth.users u
+  LEFT JOIN user_profiles p ON p.id = u.id
+  WHERE p.id IS NULL;
+
+  GET DIAGNOSTICS inserted_count = ROW_COUNT;
+  RETURN inserted_count;
+END;
+$$;
+
 -- Create trigger to create user profile on signup
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
@@ -188,6 +220,7 @@ CREATE POLICY "Users can view their own profile"
   ON user_profiles FOR SELECT
   USING (auth.uid() = id);
 
+
 CREATE POLICY "Allow profile creation on signup"
   ON user_profiles FOR INSERT
   WITH CHECK (true);
@@ -200,18 +233,3 @@ CREATE POLICY "Admins can delete user profiles"
   ON user_profiles FOR DELETE
   USING (is_admin());
 
--- Sync existing auth users to user_profiles table
-INSERT INTO user_profiles (id, name, email, role)
-SELECT 
-  u.id,
-  COALESCE(u.raw_user_meta_data->>'name', split_part(u.email, '@', 1)) as name,
-  u.email,
-  CASE 
-    WHEN u.email = 'admin@gmail.com' THEN 'admin'
-    ELSE COALESCE(u.raw_user_meta_data->>'role', 'sales_rep')
-  END as role
-FROM auth.users u
-WHERE NOT EXISTS (
-  SELECT 1 FROM user_profiles up WHERE up.id = u.id
-)
-ON CONFLICT (id) DO NOTHING;

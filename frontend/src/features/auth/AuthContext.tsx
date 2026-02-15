@@ -19,18 +19,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const ensureUserProfile = useCallback(async (profile: User) => {
+    try {
+      const { error } = await supabase
+        .from('user_profiles')
+        .upsert(
+          {
+            id: profile.id,
+            name: profile.name,
+            email: profile.email,
+            role: profile.role,
+          },
+          { onConflict: 'id' }
+        );
+
+      if (error) {
+        console.warn('Failed to upsert user profile:', error.message);
+      }
+    } catch (error) {
+      console.warn('Failed to upsert user profile');
+    }
+  }, []);
+
   useEffect(() => {
     // Check active session
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
         const userRole = session.user.email === 'admin@gmail.com' ? 'admin' : (session.user.user_metadata.role || 'sales_rep');
-        setUser({
+        const nextUser: User = {
           id: session.user.id,
           email: session.user.email!,
           name: session.user.user_metadata.name || session.user.email!,
           role: userRole,
           createdAt: session.user.created_at,
-        });
+        };
+        setUser(nextUser);
+        void ensureUserProfile(nextUser);
       }
       setIsLoading(false);
     });
@@ -41,13 +65,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
         const userRole = session.user.email === 'admin@gmail.com' ? 'admin' : (session.user.user_metadata.role || 'sales_rep');
-        setUser({
+        const nextUser: User = {
           id: session.user.id,
           email: session.user.email!,
           name: session.user.user_metadata.name || session.user.email!,
           role: userRole,
           createdAt: session.user.created_at,
-        });
+        };
+        setUser(nextUser);
+        void ensureUserProfile(nextUser);
       } else {
         setUser(null);
       }
@@ -67,13 +93,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (data.user) {
         const userRole = data.user.email === 'admin@gmail.com' ? 'admin' : (data.user.user_metadata.role || 'sales_rep');
-        setUser({
+        const nextUser: User = {
           id: data.user.id,
           email: data.user.email!,
           name: data.user.user_metadata.name || data.user.email!,
           role: userRole,
           createdAt: data.user.created_at,
-        });
+        };
+        setUser(nextUser);
+        void ensureUserProfile(nextUser);
         return { success: true };
       }
       return { success: false, error: 'Login failed' };
@@ -99,13 +127,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (authData.user) {
         const userRole = authData.user.email === 'admin@gmail.com' ? 'admin' : (data.role || 'sales_rep');
-        setUser({
+        const nextUser: User = {
           id: authData.user.id,
           email: authData.user.email!,
           name: data.name,
           role: userRole,
           createdAt: authData.user.created_at,
-        });
+        };
+        setUser(nextUser);
+        void ensureUserProfile(nextUser);
         return { success: true };
       }
       return { success: false, error: 'Registration failed' };

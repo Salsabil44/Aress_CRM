@@ -11,14 +11,6 @@ export interface UserListItem {
 
 export async function getAllUsers(): Promise<UserListItem[]> {
   try {
-    // Get current user's profile to check if they're admin
-    const { data: { user } } = await supabase.auth.getUser();
-    const isAdmin = user?.email === 'admin@gmail.com' || user?.user_metadata.role === 'admin';
-    if (!user || !isAdmin) {
-      console.error('Only admins can view all users');
-      return [];
-    }
-
     // Query the user_profiles table
     const { data, error } = await supabase
       .from('user_profiles')
@@ -30,7 +22,13 @@ export async function getAllUsers(): Promise<UserListItem[]> {
       return [];
     }
 
-    return data || [];
+    return (data || []).map((item: any) => ({
+      id: item.id,
+      name: item.name,
+      email: item.email,
+      role: item.role,
+      createdAt: item.created_at || item.createdAt,
+    }));
   } catch (error) {
     console.error('Error in getAllUsers:', error);
     return [];
@@ -75,3 +73,4 @@ export async function deleteUser(userId: string): Promise<{ success: boolean; er
     return { success: false, error: 'Failed to delete user' };
   }
 }
+
