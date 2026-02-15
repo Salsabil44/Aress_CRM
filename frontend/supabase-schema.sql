@@ -204,6 +204,31 @@ CREATE TRIGGER on_auth_user_created
   FOR EACH ROW
   EXECUTE FUNCTION create_user_profile();
 
+-- Create RLS-enabled function to delete auth user (must be called from backend with admin credentials)
+CREATE OR REPLACE FUNCTION delete_user_and_auth(user_id UUID)
+RETURNS BOOLEAN AS $$
+DECLARE
+  success BOOLEAN;
+BEGIN
+  -- Check if the current user is an admin
+  IF NOT is_admin() THEN
+    RAISE EXCEPTION 'Only admins can delete users';
+  END IF;
+
+  -- Delete from user_profiles (which should cascade to delete dependent records)
+  DELETE FROM user_profiles WHERE id = user_id;
+  
+  -- Note: Deleting from auth.users must be done via Supabase Admin API
+  -- from your backend due to auth schema restrictions. Call your backend
+  -- endpoint with the user_id after this function succeeds.
+  
+  RETURN TRUE;
+EXCEPTION
+  WHEN OTHERS THEN
+    RETURN FALSE;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
 -- Enable RLS on user_profiles
 ALTER TABLE user_profiles ENABLE ROW LEVEL SECURITY;
 
