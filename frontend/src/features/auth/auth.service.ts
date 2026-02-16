@@ -1,8 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
 import type { User, LoginCredentials, RegisterData } from './auth.types';
 
-const USERS_KEY = 'salesflow_users';
-const SESSION_KEY = 'salesflow_session';
+const USERS_KEY = 'aress_users';
+const SESSION_KEY = 'aress_session';
 
 interface StoredUser extends User {
   password: string;
@@ -12,7 +12,7 @@ const SEED_USERS: StoredUser[] = [
   {
     id: uuidv4(),
     name: 'Admin User',
-    email: 'admin@salesflow.com',
+    email: 'admin@aress.com',
     password: 'admin123',
     role: 'admin',
     createdAt: '2025-01-01T00:00:00Z',
@@ -20,7 +20,7 @@ const SEED_USERS: StoredUser[] = [
   {
     id: uuidv4(),
     name: 'Sarah Connor',
-    email: 'sarah@salesflow.com',
+    email: 'sarah@aress.com',
     password: 'sarah123',
     role: 'sales_rep',
     createdAt: '2025-01-15T00:00:00Z',
@@ -28,7 +28,7 @@ const SEED_USERS: StoredUser[] = [
   {
     id: uuidv4(),
     name: 'John Manager',
-    email: 'john@salesflow.com',
+    email: 'john@aress.com',
     password: 'john123',
     role: 'manager',
     createdAt: '2025-02-01T00:00:00Z',
