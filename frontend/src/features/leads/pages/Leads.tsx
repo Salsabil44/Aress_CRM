@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Plus, AlertTriangle } from 'lucide-react';
 import { Button, Modal } from '@/components/ui';
 import { LeadTable, LeadForm } from '../components';
+import { LeadDetailsModal } from '../components/LeadDetailsModal';
 import type { Lead, LeadFormData } from '@/types';
 
 interface LeadsPageProps {
@@ -16,6 +17,9 @@ export function Leads({ leads, onAdd, onUpdate, onDelete, onToast }: LeadsPagePr
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingLead, setEditingLead] = useState<Lead | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+
+  // View details
+  const [viewId, setViewId] = useState<string | null>(null);
 
   const handleAdd = (data: LeadFormData) => {
     onAdd(data);
@@ -50,7 +54,7 @@ export function Leads({ leads, onAdd, onUpdate, onDelete, onToast }: LeadsPagePr
     }
   };
 
-  const deleteLeadName = deleteConfirm ? leads.find(l => l.id === deleteConfirm)?.name : '';
+  const deleteLeadName = deleteConfirm ? leads.find((l) => l.id === deleteConfirm)?.name : '';
 
   return (
     <div className="space-y-5">
@@ -61,17 +65,30 @@ export function Leads({ leads, onAdd, onUpdate, onDelete, onToast }: LeadsPagePr
         </div>
         <Button
           icon={<Plus className="w-4 h-4" />}
-          onClick={() => { setEditingLead(null); setIsModalOpen(true); }}
+          onClick={() => {
+            setEditingLead(null);
+            setIsModalOpen(true);
+          }}
         >
           Add Lead
         </Button>
       </div>
 
-      <LeadTable leads={leads} onEdit={handleEdit} onDelete={handleDelete} />
+      {/*UPDATED: pass onView */}
+      <LeadTable
+        leads={leads}
+        onView={(id) => setViewId(id)}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
 
+      {/* Create/Edit Modal */}
       <Modal
         isOpen={isModalOpen}
-        onClose={() => { setIsModalOpen(false); setEditingLead(null); }}
+        onClose={() => {
+          setIsModalOpen(false);
+          setEditingLead(null);
+        }}
         title={editingLead ? 'Edit Lead' : 'Add New Lead'}
         subtitle={editingLead ? `Editing ${editingLead.name}` : 'Fill in the details below'}
         size="lg"
@@ -79,10 +96,21 @@ export function Leads({ leads, onAdd, onUpdate, onDelete, onToast }: LeadsPagePr
         <LeadForm
           lead={editingLead}
           onSubmit={editingLead ? handleUpdate : handleAdd}
-          onCancel={() => { setIsModalOpen(false); setEditingLead(null); }}
+          onCancel={() => {
+            setIsModalOpen(false);
+            setEditingLead(null);
+          }}
         />
       </Modal>
 
+      {/*Lead Details Modal */}
+      <LeadDetailsModal
+        leadId={viewId}
+        isOpen={!!viewId}
+        onClose={() => setViewId(null)}
+      />
+
+      {/* Delete Confirm Modal */}
       <Modal
         isOpen={!!deleteConfirm}
         onClose={() => setDeleteConfirm(null)}
@@ -100,8 +128,12 @@ export function Leads({ leads, onAdd, onUpdate, onDelete, onToast }: LeadsPagePr
             </div>
           </div>
           <div className="flex justify-end gap-2">
-            <Button variant="outline" size="sm" onClick={() => setDeleteConfirm(null)}>Cancel</Button>
-            <Button variant="danger" size="sm" onClick={confirmDelete}>Delete Lead</Button>
+            <Button variant="outline" size="sm" onClick={() => setDeleteConfirm(null)}>
+              Cancel
+            </Button>
+            <Button variant="danger" size="sm" onClick={confirmDelete}>
+              Delete Lead
+            </Button>
           </div>
         </div>
       </Modal>
